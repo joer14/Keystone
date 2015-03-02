@@ -1,0 +1,84 @@
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  color: green;
+}
+
+html, body {
+    height: 100%;
+}
+body {
+    margin: 0;
+}
+.box {
+
+	display: flex;
+	flex-flow:  column nowrap;
+	justify-content: center;
+	align-content: center ;
+	align-items: center;
+}
+
+.A {
+
+	order: 1
+	 flex:  0 ;
+	flex-grow: 0 ;
+	flex-shrink:0 ;
+	flex-basis: auto;
+	align-self: auto;
+	min-width:  0;
+	min-height: auto;
+
+}
+.B {
+
+	order: 2
+	 flex:  0 ;
+	flex-grow: 0 ;
+	flex-shrink:0 ;
+	flex-basis: auto;
+	align-self: auto;
+	min-width:  0;
+	min-height: auto;
+
+}
+.C {
+
+	order: 3
+	 flex:  1 ;
+	flex-grow: 0 ;
+	flex-shrink:0 ;
+	flex-basis: auto;
+	align-self: auto;
+	min-width:  0;
+	min-height: auto;
+
+}
+
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+.axis text{
+  font-family: sans-serif;
+  font-size: 11px;
+}
+
+.dot {
+  opacity: .6;
+}
+
+text {
+    stroke: black;
+    stroke-width: 0.5px;
+    fill: #000000;
+    font-size: .7em;
+    font-family:sans-serif;
+}
+
+.label {
+    fill: "black";
+}
