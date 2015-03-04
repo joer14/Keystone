@@ -74,10 +74,10 @@
             .sortSubgroups(d3.ascending)
             //.sortSubgroups(d3.ascending)
         
-        chord.sortGroups(d3.descending);
+            .sortGroups(d3.descending);
         //chord.sortSubgroups(d3.descending);
         
-        console.log(chord.groups)
+        // console.log(chord.groups)
         var arc = d3.svg.arc()
             .innerRadius(r0)
             .outerRadius(r0 + 20);
@@ -188,7 +188,7 @@
           }
 
           function groupTip (d) {
-            console.log( d);
+            // console.log( d);
             var p = d3.format(".1%"), q = d3.format(",f")
             // return "Group Info:<br/>"
             //     + d.gdata
