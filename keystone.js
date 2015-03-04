@@ -1,11 +1,7 @@
 	/*  
 	Joe Rowley
-    Scatter Plot Assignment
-    */
-  
-// From http://mkweb.bcgsc.ca/circos/guide/tables/
+    Keystone JS
 
-/*
 
     Arcs on outside of circle
     Chrods on inside of circle
@@ -15,9 +11,10 @@
 
     Width of cord is determined by location in the matrix
 
+    A lot of this code comes from Steven Hall
 */
-//*******************************************************************
-      //  CREATE MATRIX AND MAP
+      //*******************************************************************
+      //  Create Matrix and Map
       //*******************************************************************
       var matrix;
       d3.csv('test2.csv', function (error, data) {
