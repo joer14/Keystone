@@ -54,31 +54,42 @@ body {
 	min-height: auto;
 
 }
+.D {
 
+	order: 4
+	 flex:  1 ;
+	flex-grow: 0 ;
+	flex-shrink:0 ;
+	flex-basis: auto;
+	align-self: auto;
+	min-width:  0;
+	min-height: auto;
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: black;
-  shape-rendering: crispEdges;
-}
-.axis text{
-  font-family: sans-serif;
-  font-size: 11px;
-}
-
-.dot {
-  opacity: .6;
 }
 
-text {
-    stroke: black;
-    stroke-width: 0.5px;
-    fill: #000000;
-    font-size: .7em;
-    font-family:sans-serif;
-}
-
-.label {
-    fill: "black";
-}
+#tooltip {
+        color: white;
+        opacity: .9;
+        background: #333;
+        padding: 5px;
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+        position: absolute;
+        z-index: 10;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #circle circle {
+        fill: none;
+        pointer-events: all;
+      }
+      .group path {
+        fill-opacity: .7;
+      }
+      .chord {
+        fill-opacity: .7;
+        stroke-width: .25px;
+      }
+      #circle:hover path.fade {
+        display: none;
+      }

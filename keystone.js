@@ -2,256 +2,214 @@
 	Joe Rowley
     Scatter Plot Assignment
     */
-    
-    var csvDataSet = [];
+  
+// From http://mkweb.bcgsc.ca/circos/guide/tables/
 
-    //import data
-    d3.csv("scatterdata.csv",function(error, data){
-    data.forEach(function(d) {
-            d.country= d.country;
-            d.gdp= +d.gdp;
-            d.total= +d.total;
-            d.pop = +d.population;
-            d.epc= +d.epc; 
-            csvDataSet.push(d);
-        });
-    renderEverything();
-    //Call a render function once the data has been imported. 
-    // Only can do some much async
-    });
+/*
 
-    
-    //Define Margin
-    var margin = {left: 80, right: 80, top: 50, bottom: 50 }, 
-        width = 960 - margin.left -margin.right,
-        height = 500 - margin.top - margin.bottom;
+    Arcs on outside of circle
+    Chrods on inside of circle
 
-    //Define Color
-    var colors = d3.scale.category20();
+    Arcs --> groups in D3 Lingo
+    Arc length is determined by aggregating one complete row of the matrix
 
-    //Define SVG
-    var svg = d3.select("#chartBox")
-        .append("svg")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .attr("id","chart")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("class","innergraph") // setup an innergraph area, that will be subject to clipping on zooming
-                                    // all dots, labels for dots, and the legend go in this group
-    ;
-    // Create the clip path
-    // It should be offset such that it allows the y-axis to display
-    d3.select("svg").append("defs").append("clipPath").attr("id", "cp")
-        .append("rect")
-        .attr("x", -80)
-        .attr("y", 0)
-        .attr("width", width)
-        .attr("height", height)
-        .attr("transform", "translate(" + margin.left + ",0)")
-    ;
-    // Make it so that the inner graph items clip
-    d3.select(".innergraph")
-        .attr("clip-path", 'url(#cp)')
-        .attr("transform", "translate(80,0)")
-    ;
-    
-    function renderEverything(){
+    Width of cord is determined by location in the matrix
 
-        //Define Scales   
-            //Figure out max GDP
-        var maxGDP = d3.max(csvDataSet, function(d) {return d.gdp; });
-        var xScale = d3.scale.linear()
-            .domain([0,maxGDP+2]) // Add 2 to space stuff out a bit. 
-            .range([0, width]);   //
-            //Figure out max EPC
-        var maxEPC = d3.max(csvDataSet, function(d) {return d.epc; });
-        var yScale = d3.scale.linear()
-            .domain([-10,maxEPC+50]) //Need to redfine this after loading the data
-            .range([height, 0]);
+*/
+//*******************************************************************
+      //  CREATE MATRIX AND MAP
+      //*******************************************************************
+      var matrix;
+      d3.csv('test2.csv', function (error, data) {
+        var mpr = chordMpr(data);
+       // mpr.addToMap('conMem','count')
+        mpr.
+          addValuesToMap('conMem','conMem')
+          .addValuesToMap('doner','doner')
+          //.addValuesToMap('party', 'party')
+          .setFilter(function (row, a, b) {
+            return (row.doner === a.name && row.conMem === b.name ) ||
+                   (row.doner === b.name && row.conMem === a.name );
+          })
+          .setAccessor(function (recs, a, b) {
+            if (!recs[0]) return 0;
+            // console.log(recs[0]);
+            // console.log(recs.length);
+            //return recs.length;
+            //return +recs[0].count;
+            return {party: recs[0].party, count: recs[0].count, valueOf: value}
+          });
+          function value() { return +this.count; }
+          matrix = mpr.getMatrix();
+         drawChords(mpr.getMatrix(), mpr.getMap());
+      });
+      
+      var chordFill = d3.scale.ordinal()
+          .domain(d3.range(5))
+          .range(["#ef8a62", "#fddbc7", "#f7f7f7", "#d1e5f0","#67a9cf"]);
+              /*
+#b2182b
 
-        //Define Axis
-        var xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickPadding(2);
-        var yAxis = d3.svg.axis().scale(yScale).orient("left").tickPadding(2);
+#ef8a62
+#fddbc7
+#f7f7f7
+#d1e5f0
+#67a9cf
+
+#2166ac
+    */
+      //*******************************************************************
+      //  DRAW THE CHORD DIAGRAM
+      //*******************************************************************
+      
+      function drawChords (matrix, mmap) {
+        var w = 980, h = 800, r1 = h / 2, r0 = r1 - 100;
+
+        var fill = d3.scale.ordinal()
+            .range(['#c7b570','#c6cdc7','#335c64','#768935','#507282','#5c4a56','#aa7455','#574109','#837722','#73342d','#0a5564','#9c8f57','#7895a4','#4a5456','#b0a690','#0a3542',]);
+
+        var chord = d3.layout.chord()
+            .padding(.01)
+            //.sortGroups()
+            .sortSubgroups(d3.ascending)
+            //.sortSubgroups(d3.ascending)
         
-        // Tool Tip Code from: 
-        // http://bl.ocks.org/d3noob/c37cb8e630aaef7df30d
-        // http://bl.ocks.org/biovisualize/1016860
-   
-        // Define 'div' for tooltips
-        var tooltip = d3.select("body")
-            .append("div")                  // declare the tooltip div 
-            .attr("class", "tooltip")       // apply the 'tooltip' class
-            .style("opacity", 0)            // set the opacity to nil, so it is not visable
-            .style("position", "absolute")  // 
-            .style("z-index", "10");        // pull it to the top... Bit of a hack
-
-        //Scale Changes as we Zoom
-        // Call the function d3.behavior.zoom to Add zoom
-        // Zoom Code from
-        // http://bl.ocks.org/mbostock/3892919
-        var zoom = d3.behavior.zoom()
-            .x(xScale)
-            .y(yScale)
-            .scaleExtent([1, 5])
-            .on("zoom", zoomed);
-
-        function zoomed() {
-            d3.select("#chart").select(".x.axis").call(xAxis);
-            d3.select("#chart").select(".y.axis").call(yAxis);
-            d3.select("#chart").selectAll(".dot").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-            d3.select("#chart").selectAll(".country-label").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-            d3.select("#chart").selectAll(".legend").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-            
-        }
-        d3.select("#chart").call(zoom);
-
-        // Draw Country Names
-        // In innergraph 
-        d3.select(".innergraph").selectAll(".text")
-            .data(csvDataSet)
-            .enter().append("text")
-            .attr("class","text country-label")
-            .style("text-anchor", "start")
-            .attr("x", function(d) {return xScale(d.gdp);})
-            .attr("y", function(d) {return yScale(d.epc);})
-            .style("fill", "black")
-            .text(function (d) {return d.country; });
-
-        // Create x-axis
-        // Not in innergraph 
-        d3.select("#chart").append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(80," + height + ")")
-            .call(xAxis)
-            .append("text")
-            .attr("class", "label")
-            .attr("y", 50)
-            .attr("x", width/2)
-            .style("text-anchor", "end")
-            .attr("font-size", "16px")
-            .text("GDP (in Trillion US Dollars) in 2010");
-
+        chord.sortGroups(d3.descending);
+        //chord.sortSubgroups(d3.descending);
         
-        // Create Y-axis
-        // Not in innergraph 
-        d3.select("#chart").append("g")
-            .attr("class", "y axis")
-            .attr("transform", "translate(80,0)")
-            .call(yAxis)
-            .append("text")
-            .attr("class", "label")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -50)
-            .attr("x", -50)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .style("z-index", "10")
-            .attr("font-size", "16px")
-            .text("Energy Consumption per Capita (in Million BTUs per person)");
+        console.log(chord.groups)
+        var arc = d3.svg.arc()
+            .innerRadius(r0)
+            .outerRadius(r0 + 20);
 
+        var svg = d3.select("#chartBox").append("svg:svg")
+            .attr("width", w)
+            .attr("height", h)
+          .append("svg:g")
+            .attr("id", "circle")
+            .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
 
-            //Draw Scatterplot in innergraph 
-            svg.selectAll(".innergraph")
-                .data(csvDataSet)           //assign data
-                .enter().append("circle")   
-                .attr("class", "dot")
-                .attr("cx", function(d) {return xScale(d.gdp);})
-                .attr("cy", function(d) {return yScale(d.epc);})
-                .attr("r", function(d) { return Math.sqrt(d.total)/.2; })
-                .style("fill", function (d) { return colors(d.country); })
-                // add mouse over effect
-                // http://bl.ocks.org/biovisualize/1016860
-                .on("mouseover", function(d) {      
-                    tooltip.transition()
-                        .duration(300)  
-                        .style("opacity", 0);
-                    tooltip.transition()
-                        .duration(200)  
-                        .style("opacity", .9);  
-                    tooltip .html( 
-                        "<strong>" + d.country + "</Strong>" +"<br>" +
-                        "Population: " + d.pop + " million <br>" +
-                        "GDP: $" + d.gdp + " trillion <br>" +
-                        "EPC: " + d.epc + " million BTUs <br>" +
-                        "TEC: " + d.total + " Trillion BTUs"
-                        )  
-                        .style("left", (d3.event.pageX) + "px")          
-                        .style("top", (d3.event.pageY - 28) + "px");
-                    })
-                // Learned This from:
-                // http://bl.ocks.org/biovisualize/1016860
-                .on("mousemove", function(){
-                    return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+            svg.append("circle")
+                .attr("r", r0 + 20);
+
+        var rdr = chordRdr(matrix, mmap);
+        chord.matrix(matrix);
+        //console.log(chord.matrix(matrix).groups);
+
+        var g = svg.selectAll("g.group")
+            .data(chord.groups())
+          .enter().append("svg:g")
+            .attr("class", "group")
+            .on("mouseover", mouseover)
+            .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });
+
+        g.append("svg:path")
+            .style("stroke", "black")
+            .style("fill", function(d) { 
+              //console.log(rdr(d));
+              var fillColor; 
+              //console.log(rdr(d).gname);
+              if(rdr(d).gname=="Republican") return "#b2182b";
+              else if (rdr(d).gname=="Democrat") return "#2166ac";
+
+              return rdr(d).gdata == "conMem" ? "purple": "grey"; 
+              //return "purple";
+            })
+            .attr("d", arc);
+
+        g.append("svg:text")
+            .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
+            .attr("dy", ".35em")
+            .style("font-family", "helvetica, arial, sans-serif")
+            .style("font-size", "10px")
+            .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+            .attr("transform", function(d) {
+              return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+                  + "translate(" + (r0 + 26) + ")"
+                  + (d.angle > Math.PI ? "rotate(180)" : "");
+            })
+            .text(function(d) { return rdr(d).gname; });
+
+          
+       // chord.sortSubGroups(d3.descending)
+          var chordPaths = svg.selectAll("path.chord")
+                .data(chord.chords())
+              .enter().append("svg:path")
+                .attr("class", "chord")
+                .style("stroke", "black")
+                .style("fill", function(d) { 
+                  var dd =rdr(d);
+                  //var q = d3.round(num);
+                  // Make a number between 0 and 4
+                  if(dd.sname == "Democrat") {
+                    var num = dd.tvalue/dd.ttotal;
+                    var num2 = 4*num;
+                    var num3 = d3.round(num2);
+                   // console.log(dd.tname, num, num3);
+                    //console.log()
+                    
+                    return chordFill(num3);
+                  }
+
+                  else if(dd.sname == "Republican") {
+                    var num = dd.tvalue/dd.ttotal;
+                    var num2 = 4*num;
+                    var num3 = d3.round(num2);
+                    //console.log(dd.tname, num, num3);
+                    
+                    // Reverse the number
+                    return chordFill(4-num3);
+                  }
+                  else return "Green";
+                  // return dd.tname == "Independent oil & gas producers" ? "#00592d": "#ff6200"; 
                 })
-                // Clear stuff once we mouse out.
-                .on("mouseout", function(d) {      
-                    tooltip.transition()
-                        .duration(100)  
-                        .style("opacity", 0);
-                    tooltip.html("");
-                    }
-                )
-            ;
-        // add the Legend! 
-        // draw legend colored rectangles
-        d3.select(".innergraph").append("rect")
-            .attr("class", "label legend")
-            .attr("x", width-250)
-            .attr("y", height-190)
-            .attr("width", 220)
-            .attr("height", 180)
-            .attr("fill", "lightgrey")
-            .style("stroke-size", "1px");
+                .attr("d", d3.svg.chord().radius(r0))
+                .on("mouseover", function (d) {
+                  d3.select("#tooltip")
+                    .style("visibility", "visible")
+                    .html(chordTip(rdr(d)))
+                    .style("top", function () { return (d3.event.pageY - 170)+"px"})
+                    .style("left", function () { return (d3.event.pageX - 100)+"px";})
+                })
+                .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });  
+          function chordTip (d) {
+            var p = d3.format(".1%"), q = d3.format(",f")
+             //console.log(d);
+             //console.log(d.tname);
+            var msg= "<strong>Contribution Info:</strong><br/>"
+              
 
-        d3.select(".innergraph").append("circle")
-            .attr("class", "label legend")
-            .attr("r", 5)
-            .attr("cx", width-100)
-            .attr("cy", height-175)
-            .style("fill", "white");
+              
+              + d.tname + " to " + d.sname +"s"
+              + ": $" + q(d.tvalue) + "<br/>"
+              + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total ($" + q(d.ttotal) + ")<br/>"
+              + p(d.tvalue/(d.mtotal/2)) + " of Total Donated($" + q(d.mtotal/2) + ")";
+            return msg;
+          }
 
-        d3.select(".innergraph").append("circle")
-            .attr("class", "label legend")
-            .attr("r", 15.8)
-            .attr("cx", width-100)
-            .attr("cy", height-150)
-            .style("fill", "white");
+          function groupTip (d) {
+            console.log( d);
+            var p = d3.format(".1%"), q = d3.format(",f")
+            // return "Group Info:<br/>"
+            //     + d.gdata
+            //     + "<br/>"
+            //     + d.gname + " : " + q(d.gvalue) + "<br/>"
+            //     + p(d.gvalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")"
+           return  d.gname + "s: $" + q(d.gvalue) + "<br/>"
+                + p(d.gvalue/(d.mtotal/2)) + " of Total ($" + q(d.mtotal/2) + ")"
+          
+          }
 
-        d3.select(".innergraph").append("circle")
-            .attr("class", "label legend")
-            .attr("r", 50)
-            .attr("cx", width-100)
-            .attr("cy", height-80)
-            .style("fill", "white");
+          function mouseover(d, i) {
+            d3.select("#tooltip")
+              .style("visibility", "visible")
+              .html(groupTip(rdr(d)))
+              .style("top", function () { return (d3.event.pageY - 80)+"px"})
+              .style("left", function () { return (d3.event.pageX - 130)+"px";})
 
-        d3.select(".innergraph").append("text")
-            .attr("class", "label legend")
-            .attr("x", width -150)
-            .attr("y", height-172)
-            .style("text-anchor", "end")
-            .text(" 1 Trillion BTUs");
-
-        d3.select(".innergraph").append("text")
-            .attr("class", "label legend")
-            .attr("x", width -150)
-            .attr("y", height-147)
-            .style("text-anchor", "end")
-            .text(" 10 Trillion BTUs");
-
-        d3.select(".innergraph").append("text")
-            .attr("class", "label legend")
-            .attr("x", width -150)
-            .attr("y", height-77)
-            .style("text-anchor", "end")
-            .text(" 100 Trillion BTUs");
-        
-        d3.select(".innergraph").append("text")
-            .attr("class", "label legend")
-            .attr("x", width -150)
-            .attr("y", height-15)
-            .style("text-anchor", "middle")
-            .style("fill", "Green") 
-            .attr("font-size", "20px")
-            .text("Total Energy Consumption");  
-}; //close our render everything function
+            chordPaths.classed("fade", function(p) {
+              return p.source.index != i
+                  && p.target.index != i;
+            });
+          }
+      }
