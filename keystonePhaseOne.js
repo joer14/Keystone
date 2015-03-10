@@ -17,7 +17,7 @@
       //  Create Matrix and Map
       //*******************************************************************
       var matrix;
-      d3.csv('fewGroups.csv', function (error, data) {
+      d3.csv('manyGroups.csv', function (error, data) {
         var mpr = chordMpr(data);
        // mpr.addToMap('conMem','count')
         mpr.
