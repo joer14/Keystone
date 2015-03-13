@@ -64,7 +64,7 @@
 
         var fill = d3.scale.ordinal()
             .range(['#c7b570','#c6cdc7','#335c64','#768935','#507282','#5c4a56','#aa7455','#574109','#837722','#73342d','#0a5564','#9c8f57','#7895a4','#4a5456','#b0a690','#0a3542',]);
-console.log(d3.ascending);
+//console.log(d3.ascending);
         var chord = d3.layout.chord()
             .padding(.01)
             //.sortGroups()
@@ -293,8 +293,8 @@ console.log(d3.ascending);
                 })
                
                 .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });  
-                  function chordTip (d) {
-                    var p = d3.format(".1%"), q = d3.format(",f")
+                function chordTip (d) {
+                    var p = d3.format(".1%"), q = d3.format("$3,.2s")
                      //console.log(d);
                      //console.log(d.tname);
                     var msg= "<strong>Contribution Info:</strong><br/>"
@@ -302,23 +302,23 @@ console.log(d3.ascending);
 
                       
                       + d.tname + " to " + d.sname +"s"
-                      + ": $" + q(d.tvalue) + "<br/>"
-                      + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total ($" + q(d.ttotal) + ")<br/>"
-                      + p(d.tvalue/(d.mtotal/2)) + " of Total Donated($" + q(d.mtotal/2) + ")";
+                      + ": " + q(d.tvalue) + "<br/>";
+                      // + p(d.tvalue/d.ttotal) + " of " + d.tname + "'s Total (" + q(d.ttotal) + ")<br/>"
+                      // + p(d.tvalue/(d.mtotal/2)) + " of Total Donated($" + q(d.mtotal/2) + ")";
                     return msg;
                   }
 
 
           function groupTip (d) {
             // console.log( d);
-            var p = d3.format(".1%"), q = d3.format(",f")
+            var p = d3.format(".1%"), q = d3.format("$3,.2s")
             // return "Group Info:<br/>"
             //     + d.gdata
             //     + "<br/>"
             //     + d.gname + " : " + q(d.gvalue) + "<br/>"
             //     + p(d.gvalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")"
-           return  d.gname + "s: $" + q(d.gvalue) + "<br/>"
-                + p(d.gvalue/(d.mtotal/2)) + " of Total ($" + q(d.mtotal/2) + ")"
+           return  d.gname + ": " + q(d.gvalue) + "<br/>"
+                + p(d.gvalue/(d.mtotal/2)) + " of Total (" + q(d.mtotal/2) + ")"
           
           }
 
@@ -327,13 +327,13 @@ console.log(d3.ascending);
             // console.log( d);
             
 
-            var p = d3.format(".1%"), q = d3.format(",f")
+            var p = d3.format(".1%"), q = d3.format("$3,.2s")
             
             // Fill in all the sub groups and how much they donated here
             // Maybe fill in special text for each one too.. idk. 
             var subGroups = { 
                             
-                            "Fossil Fuels": { "Coal mining": {"Republicans":"$1,797,895.00","Democrats":"$31,000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Fossil Fuels": { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
                             "Construction": {"ILBC":"$10","SUA":"$1000"},
                             "Unions": {"ILBC":"$10","SUA":"$1000"},
                             "Ideological Groups": {"dumb ":"$10","SUA":"$1000"},
@@ -351,13 +351,20 @@ console.log(d3.ascending);
             
             var aGroup= subGroups[d.gname];
             _.forEach(aGroup, function(n, key) {
-              console.log(key, n.Democrats)
-              rows += "<tr><td>"+ key +"</td><td>" + n.Democrats +  "</td><td>" + n.Republicans + "</td></tr>";
+                var demStr = n.Democrats;
+                demStr = parseInt(demStr.replace(/,/g, ""));
+                demStr = q(demStr);
+                //console.log(n.Democrats)
+                //console.log(q(parseInt(n.Democrats)))
+                var repStr = n.Republicans;
+                repStr = parseInt(repStr.replace(/,/g, ""));
+                repStr = q(repStr);
+                rows += "<tr><td>"+ key +"</td><td>" + demStr +  "</td><td>" +  repStr+ "</td></tr>";
             });
             var header = "<strong>" +d.gname + ":</strong> <br>";
             var strGroups = "Subgroups: <table> <tr> <th>Group</th><th>Democrats</th><th>Republicans</th>" + rows + "</table>";
 
-            var strTotalDonate = "Contributed: $" + q(d.gvalue) + " (" + p(d.gvalue/(d.mtotal/2)) +" of total donations) <br>";
+            var strTotalDonate = "Contributed: " + q(d.gvalue) + " (" + p(d.gvalue/(d.mtotal/2)) +" of total donations) <br>";
             var msg = header + strTotalDonate + strGroups ;
             return msg;
           

@@ -155,6 +155,9 @@ body {
 .ac{
 	text-align:center;
 }
+.ar{
+	text-align:right;
+}
 #tooltip {
         color: white;
         opacity: .9;
