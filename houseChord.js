@@ -44,6 +44,10 @@
       var chordFill = d3.scale.ordinal()
           .domain(d3.range(5))
           .range(["#ef8a62", "#fddbc7", "#f7f7f7", "#d1e5f0","#67a9cf"]);
+
+      var repubColor = "#b2182b";
+      var demoColor = "#2166ac";
+      var groupColor = "#a1d99b"
               /*
 #b2182b
 
@@ -102,47 +106,23 @@
                 if((b == demoVal)&&(a == repubVal)) return -1;
                 
                 if(a<b) {
-                //  console.log(-1);
                   return -1;
                 }else if (a>b) {
-                //  console.log(1);
                   return 1;
                 }else if(a>=0) {
-                //  console.log(0);
                   return 0;
                 }else {
-                //  console.log(NaN);
                   return NaN;
                 }
-                //return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-                //console.log(d3.ascending);  
+               
             }
             )
-            //.sortSubgroups(function(a,b) { return 1; })
-            //.sortChords(d3.ascending)
-            //.sortGroups(d3.descending);
+            
         chord.sortSubgroups(
           d3.ascending
-          // function(a,b){ 
-          //       //console.log("A: ", a, "B: ", b);
-          //       //if(a==1558488)return 2;
-          //       //else 
-                
-          //       //console.log(d3.ascending);
-          //       //console.log("B: ", b);
-          //       // A hack so that democrats and republicans
-          //       // are right next to each other because
-          //       // as it turns out, fossil fuel energy industry
-          //       // gives more money than democrats recieve.
-                
-          //       console.log(a,b);
-          //       //return d3.ascneding
-          //       //return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-          //       //console.log(d3.ascending);  
-          //   }
+          
             );
         
-        // console.log(chord.groups)
         var arc = d3.svg.arc()
             .innerRadius(r0)
             .outerRadius(r0 + 20);
@@ -180,10 +160,10 @@
               //console.log(rdr(d));
               var fillColor; 
               //console.log(rdr(d).gname);
-              if(rdr(d).gname=="Republican") return "#b2182b";
-              else if (rdr(d).gname=="Democrat") return "#2166ac";
+              if(rdr(d).gname=="Republican") return repubColor;
+              else if (rdr(d).gname=="Democrat") return demoColor;
 
-              return rdr(d).gdata == "conMem" ? "purple": "grey"; 
+              return rdr(d).gdata == "conMem" ? "purple": groupColor; 
               //return "purple";
             })
             .attr("d", arc);
@@ -217,12 +197,16 @@
                   595292
                   1518891
                   */
-                  if(d.value<89052) yUp += 0;
-                  else if(d.value<435905) yUp += 10;
-                  else if(d.value<595293) yUp += 20;
-                  else if(d.value<1518892) yUp += 30;
-                  
                   var xTrans = Math.sin(d.angle)*280;
+                  
+                  if(d.value<89052) yUp += 20;
+                  else if(d.value<435905) yUp += 20;
+                  else if(d.value<595293) yUp += 20;
+                  else if(d.value<1518892) yUp += 20;
+                  else if(d.value<1558488) {
+                    yUp += 20;
+                    xTrans += -20;
+                  }
                   var yTrans = -Math.cos(d.angle)*yUp;
                   //console
 
@@ -237,15 +221,15 @@
                     // + (d.angle > Math.PI ? "rotate(180)" : "");
               })
               .style("visibility",function(d){
-                if(d.value<1518892) return "hidden";
+                if(d.value<1558488) return "hidden";
                 else return ""
               })
               
               .text(function(d) { 
-                // if(rdr(d).gname.indexOf("&") > -1) {
-                //   //d3.select("#text"+d.index).append("tspan");
+                if(rdr(d).gname.indexOf("&") > -1) {
+                  return "Materials"
 
-                // }
+                }
                 
                 return rdr(d).gname; 
               });
@@ -352,12 +336,12 @@
             var aGroup= subGroups[d.gname];
             _.forEach(aGroup, function(n, key) {
                 var demStr = n.Democrats;
-                demStr = parseInt(demStr.replace(/,/g, ""));
+                // demStr = parseInt(demStr.replace(/,/g, ""));
                 demStr = q(demStr);
                 //console.log(n.Democrats)
                 //console.log(q(parseInt(n.Democrats)))
                 var repStr = n.Republicans;
-                repStr = parseInt(repStr.replace(/,/g, ""));
+                // repStr = parseInt(repStr.replace(/,/g, ""));
                 repStr = q(repStr);
                 rows += "<tr><td>"+ key +"</td><td>" + demStr +  "</td><td>" +  repStr+ "</td></tr>";
             });
@@ -401,7 +385,7 @@
             
             d3.select("#tooltip").style("visibility", "hidden") 
             //Only remove text labels for small tight groups
-            if(d.value<1518892) {
+            if(d.value<1558488) {
               var textStringID = "#text"+i;      
               d3.select(textStringID)
                 .style("visibility", "hidden")

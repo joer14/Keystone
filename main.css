@@ -158,6 +158,9 @@ body {
 .ar{
 	text-align:right;
 }
+.al{
+	text-align:left;
+}
 #tooltip {
         color: white;
         opacity: .9;
