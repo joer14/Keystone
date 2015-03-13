@@ -64,7 +64,7 @@
       //*******************************************************************
       
       function drawChords (matrix, mmap) {
-        var w = 700, h = 700, r1 = h / 2, r0 = r1 - 100;
+        var w = 700, h = 600, r1 = w / 2, r0 = r1 - 100;
 
         var fill = d3.scale.ordinal()
             .range(['#c7b570','#c6cdc7','#335c64','#768935','#507282','#5c4a56','#aa7455','#574109','#837722','#73342d','#0a5564','#9c8f57','#7895a4','#4a5456','#b0a690','#0a3542',]);
@@ -146,6 +146,7 @@
         var rdr = chordRdr(matrix, mmap);
         chord.matrix(matrix);
         //console.log(chord.matrix(matrix).groups);
+         
 
         var g = svg.selectAll("g.group")
             .data(chord.groups())
@@ -234,7 +235,23 @@
                 return rdr(d).gname; 
               });
 
-          
+         var legend = d3.select("#chordDiagram")
+             //.data(chordFill.domain().slice().reverse())
+            //.enter().append("g")
+             .append("g")
+             .attr("class", "legend")
+             .attr("transform", function(d, i) { 
+               console.log(chordFill.domain().slice().reverse());
+               console.log(d,i);
+               return "translate(0," + i * 20 + ")"; 
+             });
+
+          legend.append("rect")
+              .attr("x", w - 18)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", chordFill);
+
        // chord.sortSubGroups(d3.descending)
           var chordPaths = svg.selectAll("path.chord")
                 .data(chord.chords())
@@ -391,4 +408,13 @@
                 .style("visibility", "hidden")
             }
           }
+
+
+          // legend.append("text")
+          //     .attr("x", w - 24)
+          //     .attr("y", 9)
+          //     .attr("dy", ".35em")
+          //     .style("text-anchor", "end")
+          //     .text(function(d) { return d; });
       }
+
