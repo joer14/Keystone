@@ -1,4 +1,23 @@
 	/*  
+
+  Todo
+    
+    Part 1 todo: 
+
+      3rd color intreset groups
+      put democratrs on top of republicans in both the chord diagram and bar chart
+      fix tool tip -
+        make background lighter/clearer 
+        change language so it's just the name and the percent
+      add border to subgroup box
+      remove black line from bar chart and change order
+      align money to the right... make it $20k instead of $20,00
+      
+      input all of subgroups from the excel sheet
+
+    Pac/Non Pac Switch View
+    
+
 	Joe Rowley
     Keystone JS
 
@@ -121,7 +140,7 @@
             //.sortChords(d3.ascending)
             //.sortGroups(d3.descending);
         chord.sortSubgroups(
-          d3.ascending
+          d3.descending
           // function(a,b){ 
           //       //console.log("A: ", a, "B: ", b);
           //       //if(a==1558488)return 2;
@@ -332,7 +351,7 @@
             // Maybe fill in special text for each one too.. idk. 
             var subGroups = { 
                             
-                            "Fossil Fuels": { "Coal mining": {"Republicans":"$1,797,895.00","Democrats":"$31,000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Fossil Fuels": { "Coal mining": {"Republicans":"$1,797,895.00","Democrats":"$31,000.00"} , "Oil Production":{"Democrats":"$10","Republicans":"$15"} },
                             "Construction": {"ILBC":"$10","SUA":"$1000"},
                             "Unions": {"ILBC":"$10","SUA":"$1000"},
                             "Ideological Groups": {"dumb ":"$10","SUA":"$1000"},
