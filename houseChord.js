@@ -16,8 +16,8 @@
       //*******************************************************************
       //  Create Matrix and Map
       //*******************************************************************
-      //var matrix;
-      d3.csv('yesNoMany.csv', function (error, data) {
+      var matrix;
+      d3.csv('fewGroups.csv', function (error, data) {
         var mpr = chordMpr(data);
        // mpr.addToMap('conMem','count')
         mpr.
@@ -38,32 +38,33 @@
           });
           function value() { return +this.count; }
           matrix = mpr.getMatrix();
-         drawChords2(mpr.getMatrix(), mpr.getMap());
+         drawChords(mpr.getMatrix(), mpr.getMap());
       });
       
-      var chordFill2 = d3.scale.ordinal()
+      var chordFill = d3.scale.ordinal()
           .domain(d3.range(5))
-          .range(["#e9a3c9", "#fde0ef", "#f7f7f7", "#e6f5d0","#a1d76a"]);
+          .range(["#ef8a62", "#fddbc7", "#f7f7f7", "#d1e5f0","#67a9cf"]);
               /*
-#c51b7d
+#b2182b
 
-#e9a3c9
-#fde0ef
+#ef8a62
+#fddbc7
 #f7f7f7
-#e6f5d0
-#a1d76a
+#d1e5f0
+#67a9cf
 
-#4d9221
+#2166ac
     */
       //*******************************************************************
       //  DRAW THE CHORD DIAGRAM
       //*******************************************************************
       
-      function drawChords2 (matrix, mmap) {
+      function drawChords (matrix, mmap) {
         var w = 700, h = 700, r1 = h / 2, r0 = r1 - 100;
 
         var fill = d3.scale.ordinal()
             .range(['#c7b570','#c6cdc7','#335c64','#768935','#507282','#5c4a56','#aa7455','#574109','#837722','#73342d','#0a5564','#9c8f57','#7895a4','#4a5456','#b0a690','#0a3542',]);
+console.log(d3.ascending);
         var chord = d3.layout.chord()
             .padding(.01)
             //.sortGroups()
@@ -146,12 +147,12 @@
             .innerRadius(r0)
             .outerRadius(r0 + 20);
 
-        var svg = d3.select("#chartBox2").append("svg:svg")
+        var svg = d3.select("#chartBox").append("svg:svg")
             .attr("width", w)
             .attr("height", h)
-            .attr("id","chordDiagram2")
+            .attr("id","chordDiagram")
           .append("svg:g")
-            .attr("id", "circle2")
+            .attr("id", "circle")
             .attr("transform", function(){
               var trans= "translate(" + w / 2 + "," + h / 2 + ")";
               var trans2 = "scale(-1,-1)";
@@ -159,7 +160,7 @@
               return trans3;
             })
             
-            svg.append("circle2")
+            svg.append("circle")
                 .attr("r", r0 + 20);
 
         var rdr = chordRdr(matrix, mmap);
@@ -170,8 +171,8 @@
             .data(chord.groups())
           .enter().append("svg:g")
             .attr("class", "group")
-            .on("mouseover", mouseover2)
-            .on("mouseout", mouseout2);
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout);
 
         g.append("svg:path")
             .style("stroke", "black")
@@ -179,10 +180,10 @@
               //console.log(rdr(d));
               var fillColor; 
               //console.log(rdr(d).gname);
-              if(rdr(d).gname=="Yes") return "#c51b7d";
-              else if (rdr(d).gname=="No") return "#4d9221";
+              if(rdr(d).gname=="Republican") return "#b2182b";
+              else if (rdr(d).gname=="Democrat") return "#2166ac";
 
-              return rdr(d).gdata == "conMem" ? "#f7f7f7": "grey"; 
+              return rdr(d).gdata == "conMem" ? "purple": "grey"; 
               //return "purple";
             })
             .attr("d", arc);
@@ -260,39 +261,39 @@
                   var dd =rdr(d);
                   //var q = d3.round(num);
                   // Make a number between 0 and 4
-                  if(dd.sname == "No") {
+                  if(dd.sname == "Democrat") {
                     var num = dd.tvalue/dd.ttotal;
                     var num2 = 4*num;
                     var num3 = d3.round(num2);
                    // console.log(dd.tname, num, num3);
                     //console.log()
                     
-                    return chordFill2(num3);
+                    return chordFill(num3);
                   }
 
-                  else if(dd.sname == "Yes") {
+                  else if(dd.sname == "Republican") {
                     var num = dd.tvalue/dd.ttotal;
                     var num2 = 4*num;
                     var num3 = d3.round(num2);
                     //console.log(dd.tname, num, num3);
                     
                     // Reverse the number
-                    return chordFill2(4-num3);
+                    return chordFill(4-num3);
                   }
-                  else return "#f7f7f7";
+                  else return "Green";
                   // return dd.tname == "Independent oil & gas producers" ? "#00592d": "#ff6200"; 
                 })
                 .attr("d", d3.svg.chord().radius(r0))
                 .on("mouseover", function (d) {
-                  d3.select("#tooltip2")
+                  d3.select("#tooltip")
                     .style("visibility", "visible")
-                    .html(chordTip2(rdr(d)))
+                    .html(chordTip(rdr(d)))
                     .style("top", function () { return (d3.event.pageY - 170)+"px"})
                     .style("left", function () { return (d3.event.pageX - 100)+"px";})
                 })
                
-                .on("mouseout", function (d) { d3.select("#tooltip22").style("visibility", "hidden") });  
-                  function chordTip2 (d) {
+                .on("mouseout", function (d) { d3.select("#tooltip").style("visibility", "hidden") });  
+                  function chordTip (d) {
                     var p = d3.format(".1%"), q = d3.format(",f")
                      //console.log(d);
                      //console.log(d.tname);
@@ -308,7 +309,7 @@
                   }
 
 
-          function groupTip2 (d) {
+          function groupTip (d) {
             // console.log( d);
             var p = d3.format(".1%"), q = d3.format(",f")
             // return "Group Info:<br/>"
@@ -321,7 +322,7 @@
           
           }
 
-          function fillinfoBox2 (d) {
+          function fillInfoBox (d) {
             var generalCongressInfo ="<h3>House of Representatives Make Up</h3>"
             // console.log( d);
             
@@ -362,25 +363,25 @@
           
           }
 
-          function mouseover2(d, i) {
-            d3.select("#tooltip2")
+          function mouseover(d, i) {
+            d3.select("#tooltip")
               .style("visibility", "visible")
-              .html(groupTip2(rdr(d)))
+              .html(groupTip(rdr(d)))
               .style("top", function () { return (d3.event.pageY - 80)+"px"})
               .style("left", function () { return (d3.event.pageX - 130)+"px";})
 
             
              
-            d3.select("#infoBox2")
+            d3.select("#infoBox")
               .style("visibility", "visible")
-              .html(groupTip2(rdr(d)))
+              .html(groupTip(rdr(d)))
 
-            d3.select("#infoBox2")
+            d3.select("#infoBox")
               .style("visibility", "visible")
-              .html(fillinfoBox2(rdr(d)))
+              .html(fillInfoBox(rdr(d)))
 
 
-            var textStringID = "#ext"+i;      
+            var textStringID = "#text"+i;      
             d3.select(textStringID)
               .style("visibility", "visible")
 
@@ -389,12 +390,12 @@
                   && p.target.index != i;
             });
           }
-          function mouseout2(d, i) {
+          function mouseout(d, i) {
             
-            d3.select("#tooltip2").style("visibility", "hidden") 
+            d3.select("#tooltip").style("visibility", "hidden") 
             //Only remove text labels for small tight groups
             if(d.value<1518892) {
-              var textStringID = "#ext"+i;      
+              var textStringID = "#text"+i;      
               d3.select(textStringID)
                 .style("visibility", "hidden")
             }

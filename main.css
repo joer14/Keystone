@@ -1,6 +1,10 @@
 body {
   font-family: 'Helvetica', 'Arial', sans-serif;
-  color: green;
+  
+}
+
+h1{
+	color: green;
 }
 
 html, body {
@@ -67,6 +71,30 @@ body {
 	min-height: auto;
 
 }
+.E {
+
+	order: 5
+	 flex:  1 ;
+	flex-grow: 0 ;
+	flex-shrink:0 ;
+	flex-basis: auto;
+	align-self: auto;
+	min-width:  0;
+	min-height: auto;
+
+}
+.F {
+
+	order: 6
+	 flex:  1 ;
+	flex-grow: 0 ;
+	flex-shrink:0 ;
+	flex-basis: auto;
+	align-self: auto;
+	min-width:  0;
+	min-height: auto;
+
+}
 .flexcontainer {
    display: -webkit-flex;
    display: flex;
@@ -80,18 +108,53 @@ body {
 
 #chordDiagram {
    /* This will be twice as big as the small item. */
-   -webkit-flex: 2 0 0; 
-   flex: 2 0 0; 
+   /*-webkit-flex: 2 0 0; */
+   /*flex: 2 0 0; */
    min-width: 700px;
    max-width: 700px;
 }
-#infoBox {
-   -webkit-flex: 1 0 0;
-   flex: 1 0 0;
+#leftCol {
+   /*flex: 1 1 0;*/
+   flex-direction: column;
    max-width: 400px;
    min-width: 400px;
+   min-height: 500px
+
+}
+#leftCol2 {
+   /*flex: 1 1 0;*/
+   flex-direction: column;
+   max-width: 400px;
+   min-width: 400px;
+   min-height: 500px
+
 }
 
+#houseBox {
+   /*flex: 0 0 0;*/
+   /*align-self: flex-start;*/
+   min-height: 200px;
+   color: black;
+}
+#houseBox2{
+   /*flex: 0 0 0;*/
+   /*align-self: flex-start;*/
+   min-height: 200px;
+   color: black;
+}
+.democrat{
+	color :rgb(33, 102, 172);
+}
+.republican{
+	color:rgb(178, 24, 43);
+}
+#infoBox{
+   /*flex: 0 0 0;*/
+   /*align-self: flex-end;*/
+}
+.ac{
+	text-align:center;
+}
 #tooltip {
         color: white;
         opacity: .9;
@@ -118,3 +181,20 @@ body {
       #circle:hover path.fade {
         display: none;
       }
+}
+
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: steelblue;
+}
+
+.x.axis path {
+  display: none;
+}
