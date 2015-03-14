@@ -129,7 +129,7 @@
 
         var svg = d3.select("#chartBox").append("svg:svg")
             .attr("width", w)
-            .attr("height", h)
+            .attr("height", h+50)
             .attr("id","chordDiagram")
           .append("svg:g")
             .attr("id", "circle")
@@ -235,23 +235,56 @@
                 return rdr(d).gname; 
               });
 
-         var legend = d3.select("#chordDiagram")
-             //.data(chordFill.domain().slice().reverse())
-            //.enter().append("g")
-             .append("g")
-             .attr("class", "legend")
-             .attr("transform", function(d, i) { 
-               console.log(chordFill.domain().slice().reverse());
-               console.log(d,i);
-               return "translate(0," + i * 20 + ")"; 
-             });
+          // add legend   
+          var legend = d3.select("#chordDiagram").append("g")
+            .attr("class", "legend")
+            .attr("x", w - 65)
+            .attr("y", 50)
+            .attr("height", 100)
+            .attr("width", 100)
 
-          legend.append("rect")
-              .attr("x", w - 18)
-              .attr("width", 18)
-              .attr("height", 18)
-              .style("fill", chordFill);
+            //.attr('transform', 'translate(-20,50)')    
+              
+            
+            legend.selectAll('rect')
+              .data(chordFill.domain().slice().reverse())
+              .enter()
+              .append("rect")
+              .attr("y", h - 30)
+              .attr("x", function(d, i){ 
+                return (i *  40);
+              })
+              .attr("width", 20)
+              .attr("height", 20)
+              .style("fill", function(d) { 
+                  //var color = color_hash[dataset.indexOf(d)][1];
+                  //return color;
+                  return chordFill(d);
+                })
+              
+            legend.selectAll('text')
+              .data(chordFill.domain().slice().reverse())
+              .enter()
+              .append("text")
+              .attr("y", h +10)
+              .attr("x", function(d, i){ 
+                return i *  40;
+              })
+              .style("font-size", "12px")
+            .text(function(d) {
+                //var text = color_hash[dataset.indexOf(d)][0];
+                //return text;
+                switch(d){
+                  case 4: return ">80%";
+                  case 3: return ">60%";
+                  case 2: return ">40%";
+                  case 1: return ">20%";
+                  case 0: return ">=0%";
+                }
 
+                return d;
+              });
+         
        // chord.sortSubGroups(d3.descending)
           var chordPaths = svg.selectAll("path.chord")
                 .data(chord.chords())
@@ -335,30 +368,30 @@
             var subGroups = { 
                             
                             "Fossil Fuels": { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Construction": {"ILBC":"$10","SUA":"$1000"},
-                            "Unions": {"ILBC":"$10","SUA":"$1000"},
-                            "Ideological Groups": {"dumb ":"$10","SUA":"$1000"},
-                            "Transportation": {"cars":"$10","SUA":"$1000"},
-                            "Environmental policy": {"ILBC":"$10","SUA":"$1000"},
-                            "Business Associations": {"ILBC":"$10","SUA":"$1000"},
-                            "Alternate energy production & services": {"ILBC":"$10","SUA":"$1000"},
-                            "Nuclear energy": {"ILBC":"$10","SUA":"$1000"},
-                            "Other": {"ILBC":"$10","SUA":"$1000"},
-                            "Materials & Manufacturing": {"ILBC":"$10","SUA":"$1000"}
+                            "Construction":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Unions ":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} ,
+                            "Ideological Groups":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Transportation":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Environmental policy":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Business Associations":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Alternate energy production & services":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Nuclear energy":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Other":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
+                            "Materials & Manufacturing":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"}
 
-                            };
+                            }}};
             //_each
             var rows = ""; 
             
             var aGroup= subGroups[d.gname];
             _.forEach(aGroup, function(n, key) {
                 var demStr = n.Democrats;
-                // demStr = parseInt(demStr.replace(/,/g, ""));
+                demStr = parseInt(demStr.replace(/,/g, ""));
                 demStr = q(demStr);
                 //console.log(n.Democrats)
                 //console.log(q(parseInt(n.Democrats)))
                 var repStr = n.Republicans;
-                // repStr = parseInt(repStr.replace(/,/g, ""));
+                repStr = parseInt(repStr.replace(/,/g, ""));
                 repStr = q(repStr);
                 rows += "<tr><td>"+ key +"</td><td>" + demStr +  "</td><td>" +  repStr+ "</td></tr>";
             });
@@ -410,11 +443,6 @@
           }
 
 
-          // legend.append("text")
-          //     .attr("x", w - 24)
-          //     .attr("y", 9)
-          //     .attr("dy", ".35em")
-          //     .style("text-anchor", "end")
-          //     .text(function(d) { return d; });
+          
       }
 
