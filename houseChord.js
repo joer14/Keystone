@@ -45,9 +45,9 @@
           .domain(d3.range(5))
           .range(["#ef8a62", "#fddbc7", "#f7f7f7", "#d1e5f0","#67a9cf"]);
 
-      var repubColor = "#b2182b";
+      var repubColor = "rgb(247, 25, 25)";
       var demoColor = "#2166ac";
-      var groupColor = "#a1d99b"
+      var groupColor = "rgb(95, 189, 4)";//"rgb(64,200,49)"
               /*
 #b2182b
 
@@ -128,7 +128,7 @@
             .outerRadius(r0 + 20);
 
         var svg = d3.select("#chartBox").append("svg:svg")
-            .attr("width", w)
+            .attr("width", w+400)
             .attr("height", h+50)
             .attr("id","chordDiagram")
           .append("svg:g")
@@ -156,7 +156,7 @@
             .on("mouseout", mouseout);
 
         g.append("svg:path")
-            .style("stroke", "black")
+            .style("stroke", "white")
             .style("fill", function(d) { 
               //console.log(rdr(d));
               var fillColor; 
@@ -235,7 +235,6 @@
                 return rdr(d).gname; 
               });
 
-          // add legend   
           var legend = d3.select("#chordDiagram").append("g")
             .attr("class", "legend")
             .attr("x", w - 65)
@@ -245,13 +244,14 @@
 
             //.attr('transform', 'translate(-20,50)')    
               
-            
+                
             legend.selectAll('rect')
               .data(chordFill.domain().slice().reverse())
               .enter()
               .append("rect")
-              .attr("y", h - 30)
-              .attr("x", function(d, i){ 
+              .attr("x", 670)
+              .attr("transform", "translate(10,90)")
+              .attr("y", function(d, i){ 
                 return (i *  40);
               })
               .attr("width", 20)
@@ -266,24 +266,65 @@
               .data(chordFill.domain().slice().reverse())
               .enter()
               .append("text")
-              .attr("y", h +10)
-              .attr("x", function(d, i){ 
-                return i *  40;
+              .attr("transform", "translate(15,105)")
+              .attr("x", 690)
+              //.attr("y", 50)
+              //.attr("dy", ".35em")
+              .attr("y", function(d, i){ 
+                 return i * 40;
               })
               .style("font-size", "12px")
-            .text(function(d) {
-                //var text = color_hash[dataset.indexOf(d)][0];
-                //return text;
+             .text(function(d) {
                 switch(d){
-                  case 4: return ">80%";
-                  case 3: return ">60%";
-                  case 2: return ">40%";
-                  case 1: return ">20%";
-                  case 0: return ">=0%";
+                  case 4: return ">80% D";
+                  case 3: return ">60% D ";
+                  case 2: return "~50% D/R";
+                  case 1: return ">60% R";
+                  case 0: return ">80% R";
                 }
 
                 return d;
-              });
+              })
+            legend.append("text")
+                .attr("x", 700)
+                //.attr("y", "30")
+                .attr("dy", "6em")
+                .style("text-anchor", "middle")
+                .style("font-size", "10pt")
+                .text("Contribution Breakdown:");
+           
+            legend.append("text")
+                .attr("x", 750)
+                .attr("dy", "30em")
+                .style("text-anchor", "middle")
+                .style("font-size", "12pt")
+                .style("fill", "rgb(33, 102, 172")       
+                .text("Democrats: 188(43%)");
+            
+            legend.append("text")
+                .attr("x", 755)
+                .attr("dy", "31em")
+                .style("text-anchor", "middle")
+                .style("font-size", "12pt")
+                .style("fill", "rgb(200, 15, 15)")
+                .text("Republicans: 245(56%)");
+                      
+             legend.append("text")
+                .attr("x", 750)
+                .attr("dy", "35em")
+                .style("text-anchor", "middle")
+                .style("font-size", "50pt")
+                .style("font-color", "steelblue")
+                .text("Data: Campaign Contributions from Oct 1, 2012 to Sept 30, 2014.");
+            
+            legend.append("text")
+                .attr("x", 755)
+                .attr("dy", "51em")
+                .style("text-anchor", "middle")
+                .style("font-size", "12pt")
+                .text("Republicans: 245(56%)");
+            
+
          
        // chord.sortSubGroups(d3.descending)
           var chordPaths = svg.selectAll("path.chord")
@@ -331,7 +372,7 @@
                     var p = d3.format(".1%"), q = d3.format("$3,.2s")
                      //console.log(d);
                      //console.log(d.tname);
-                    var msg= "<strong>Contribution Info:</strong><br/>"
+                    var msg= "<strong></strong>"
                       
 
                       
@@ -347,7 +388,7 @@
             // console.log( d);
             var p = d3.format(".1%"), q = d3.format("$3,.2s")
             // return "Group Info:<br/>"
-            //     + d.gdata
+            // d.gdata
             //     + "<br/>"
             //     + d.gname + " : " + q(d.gvalue) + "<br/>"
             //     + p(d.gvalue/(d.mtotal/2)) + " of Matrix Total (" + q(d.mtotal/2) + ")"
@@ -367,39 +408,53 @@
             // Maybe fill in special text for each one too.. idk. 
             var subGroups = { 
                             
-                            "Fossil Fuels": { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Construction":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Unions ":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} ,
-                            "Ideological Groups":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Transportation":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Environmental policy":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Business Associations":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Alternate energy production & services":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Nuclear energy":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Other":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"} },
-                            "Materials & Manufacturing":  { "Coal mining": {"Republicans":"1,797,895.00","Democrats":"31000.00"} , "SUA":{"Democrats":"$10","Republicans":"$15"}
+                            "Fossil Fuels": { "Coal mining": { "Republicans":"$1,797,895", "Democrats":"$31,000"}, "Electric Power Utilities": { "Republicans":"$2,769,115","Democrats":"$1,106,153"},"Energy Production & Distribution":{ "Republicans":"$944,911","Democrats":"$168,568"}, "Gas & Electric Utilities":{"Republicans":"$2,497,348","Democrats":"$1,458,983"}, "Fuel Oil Dealers":{"Republicans":"$9,950","Democrats":"$8,700"}, "Independent Oil & Gas Producers":{"Republicans":"$3,075,761","Democrats":"$221,420"},"LPG/Liquid Propane Dealers & Producers":{"Republicans":"$113,100","Democrats":"$13,000"}, "Natural Gas transmission & distribution":{"Republicans":"$1,618,810", "Democrats":"$353,880"},  "Oilfield service, equipment & exploration":{"Republicans":"$1,720,694", "Democrats":"$122,000"}, "Major (multinational) oil & gas producers":{"Republicans":"$2,401,775.00", "Democrats":"$327,400"} ,"Oil and Gas":{"Republicans":"$2,032,513","Democrats":"$165,125"}, "Power plant construction & equipment":{"Republicans":"$595,488","Democrats":"$179,200"} , "Petroleum refining & marketing":{"Republicans":"$2,940,985", "Democrats":"$255,225"} },
+               
+                "Materials & Manufacturing" : { "Industrial/Commercial Equipment & Materials" : { "Republicans" : "$3,221,728" , "Democrats" : "$1,356,742"}, "Metal mining & processing": { "Republicans" : "$304,700" , "Democrats" : "$76,500"}, "Steel":{ "Republicans": "$891,324", "Democrats": "$177,600"}, "Stone, Clay, Glass & Concrete Products":{ "Republicans": "$1,986,475", "Democrats": "$483,400"}, "Chemicals" : {"Republicans" : "$2,013,952", "Democrats": "$463,508"}, "Agricultural Chemicals (fertilizers & pesticides)" : {"Republicans" : "$447,200", "Democrats" : "$151,012"}, "Plumbing & Pipe Products" : {"Republicans" : "$129,940", "Democrats": "$22,700"}, "Manufacturing" : {"Republicans" : "$152,330", "Democrats": "$15,086"},  "Food and Kindred Products Manufacturing" : {"Republicans" : "$1,071,196", "Democrats": "$334,475"}, "Department, variety & convenience stores" : {"Republicans" : "$1,414,585", "Democrats": "$732,950"},  "Forestry & Forest Products" : {"Republicans" : "$1,438,038", "Democrats": "$416,933"} }, 
+               
 
-                            }}};
+                
+                "Transportation" : {"Airlines":{ "Republicans": "$886,100", "Democrats": "$533,285"}, "Bus Services" : {"Republicans" : "$128,450", "Democrats": "$32,350"}, "Sea freight & passenger services" : {"Republicans" : "$702,164", "Democrats" : "$457,106"}, "Sea transport" : {"Republicans" : "$114,308", "Democrats": "$68,435"}, "Transportation" : {"Republicans" : "$248,600", "Democrats": "$43,700"}, "Trucking Companies & Services" : {"Republicans" : "$1,551,425", "Democrats": "$262,000"}}, 
+
+
+
+                            "Construction" : { "Public works, industrial & commercial construction" : { "Republicans" : "$2,258,172" , "Democrats" : "$700,079"}, "Construction equipment": { "Republicans" : "$747,800" , "Democrats" : "$114,567"}, "Equipment rental & leasing":{ "Republicans": "$270,971", "Democrats": "$134,700"}, "Electrical contractors":{ "Republicans": "$817,885", "Democrats": "$307,750"}, "Engineering, architecture & construction mgmt svcs" : {"Republicans" : "$2,196,119", "Democrats": "$1,426,592"}, "Residential construction" : {"Republicans" : "$1,949,133", "Democrats" : "$592,051"}, "Special trade contractors" : {"Republicans" : "$744,627", "Democrats": "$231,535"}, "Plumbing, Heating & Air conditioning": {"Republicans" : "$423,407", "Democrats" : "$187,790"} },
+                "Unions" : {"Building Trades Unions":{ "Republicans": "$1,484,550", "Democrats": "$7,531,333"}, "IBEW (Intl Brotherhood of Electrical Workers)" : {"Republicans" : "$52,590", "Democrats": "$1,568,775"}, "Teamsters union"  : {"Republicans" : "$81,500", "Democrats" : "$1,093,850"} },
+                
+                "Business Associations" : {"General business associations":{ "Republicans": "$540,310", "Democrats": "$177,250"}, "Chambers of commerce" : {"Republicans" : "$173,819", "Democrats": "$34,025"}, "Small business associations"  : {"Republicans" : "$22,550", "Democrats" : "$529,238"}, "Fiscal & tax policy"  : {"Republicans" : "$40,450", "Democrats" : "$1,250"} },
+                "Ideological Groups" : {"Republican/Conservative":{ "Republicans": "$5,754,017", "Democrats": "$23,100"}, "Minority/Ethnic Groups" : {"Republicans" : "$263,906", "Democrats": "$762,577"}, "Pro-resource development groups"  : {"Republicans" : "$2,500", "Democrats" : "None"} },
+                
+                "Alternate energy production & services" : {"Alternate energy production & services":{"Republicans": "$337,300", "Democrats": "$257,992"}},
+
+                "Environmental Policy" : {"Environmental Policy":{ "Republicans": "$224,458", "Democrats": "$1,334,030"}},
+
+                "Homeland Security contractors" : {"Homeland Security contractors":{ "Republicans": "$54,050", "Democrats": "$35,000"}},
+
+                "Nuclear energy" : {"Nuclear energy":{ "Republicans": "$256,450", "Democrats": "$179,450"}}, 
+
+                            };
             //_each
             var rows = ""; 
             
             var aGroup= subGroups[d.gname];
             _.forEach(aGroup, function(n, key) {
                 var demStr = n.Democrats;
-                demStr = parseInt(demStr.replace(/,/g, ""));
+                demStr = demStr.replace(/,/g, "");
+                demStr = parseInt(demStr.replace("$", ""));
                 demStr = q(demStr);
                 //console.log(n.Democrats)
                 //console.log(q(parseInt(n.Democrats)))
                 var repStr = n.Republicans;
-                repStr = parseInt(repStr.replace(/,/g, ""));
+                repStr = repStr.replace(/,/g, "");
+                repStr = parseInt(repStr.replace("$", ""));
                 repStr = q(repStr);
-                rows += "<tr><td>"+ key +"</td><td>" + demStr +  "</td><td>" +  repStr+ "</td></tr>";
+                rows += '<tr><td><br>'+ key +'</br></td><td style="color: steelblue"><br>' + demStr +  '</br></td><td style="color: rgb(247, 25, 25)"><br>' +  repStr+ '</br></td></tr>';
             });
             var header = "<strong>" +d.gname + ":</strong> <br>";
-            var strGroups = "Subgroups: <table> <tr> <th>Group</th><th>Democrats</th><th>Republicans</th>" + rows + "</table>";
+            var strGroups = '<table style="font-size: 12px">' + rows + "</table>";
 
             var strTotalDonate = "Contributed: " + q(d.gvalue) + " (" + p(d.gvalue/(d.mtotal/2)) +" of total donations) <br>";
-            var msg = header + strTotalDonate + strGroups ;
+            var msg = strGroups;
             return msg;
           
           }
@@ -407,6 +462,8 @@
           function mouseover(d, i) {
             d3.select("#tooltip")
               .style("visibility", "visible")
+              .style("background-color", "lightgray")
+              .style("color", "black")
               .html(groupTip(rdr(d)))
               .style("top", function () { return (d3.event.pageY - 80)+"px"})
               .style("left", function () { return (d3.event.pageX - 130)+"px";})
@@ -414,11 +471,13 @@
             
              
             d3.select("#infoBox")
+              .style("font-size", "10pt")
               .style("visibility", "visible")
               .html(groupTip(rdr(d)))
 
             d3.select("#infoBox")
-              .style("visibility", "visible")
+              .style("font-size", "10pt")
+              //.style("visibility", "visible")
               .html(fillInfoBox(rdr(d)))
 
 

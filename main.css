@@ -1,10 +1,10 @@
 body {
-  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Helvetica' 'Arial', sans-serif;
   
 }
 
 h1{
-	color: green;
+	color: black;
 }
 
 html, body {
@@ -50,6 +50,7 @@ body {
 
 	order: 3
 	flex:  0 ;
+    font-size: 12px;
 	flex-grow: 0 ;
 	flex-shrink:0 ;
 	flex-basis: auto;
@@ -81,6 +82,7 @@ body {
 	align-self: auto;
 	min-width:  0;
 	min-height: auto;
+    font-size: 10pt;
 
 }
 .F {
@@ -104,30 +106,47 @@ body {
    align-items: center;
    -webkit-justify-content: center;
    justify-content: center;
+   
+}
+
+#infoBox{
+    font-size: 10pt;
 }
 
 #chordDiagram {
    /* This will be twice as big as the small item. */
    /*-webkit-flex: 2 0 0; */
    /*flex: 2 0 0; */
-   min-width: 700px;
-   max-width: 700px;
+   min-width: 900px;
+   max-width: 900px;
+   min-height: 500px;
 }
+.legend{
+    
+}
+
 #leftCol {
    /*flex: 1 1 0;*/
    flex-direction: column;
-   max-width: 400px;
-   min-width: 400px;
+   max-width: 200px;
+   min-width: 200px;
    min-height: 500px
 
 }
 #leftCol2 {
    /*flex: 1 1 0;*/
    flex-direction: column;
-   max-width: 400px;
+   max-width: 100px;
    min-width: 400px;
    min-height: 500px
 
+}
+#main {
+    flex-direction: column;
+    align-self: flex-start;
+}
+#source{
+    text-align: right;
 }
 
 #houseBox {
@@ -141,6 +160,9 @@ body {
    /*align-self: flex-start;*/
    min-height: 200px;
    color: black;
+}
+.aGroup{
+    font-size: 10pt;
 }
 .democrat{
 	color :rgb(33, 102, 172);
