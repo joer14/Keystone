@@ -103,7 +103,10 @@
 
                 //console.log(a,b);
                 if((a == fossVal)&&(b == demoVal)) return -1;
-                if((b == demoVal)&&(a == repubVal)) return -1;
+                if((b == demoVal)&&(a == repubVal)) return 1;
+
+                // if((a == republicans)&&(b == demoVal)) return -1;
+                // if((b == democrats)&&(a == repubVal)) return -1;
                 
                 if(a<b) {
                   return -1;
@@ -454,7 +457,7 @@
             var strGroups = '<table style="font-size: 12px">' + rows + "</table>";
 
             var strTotalDonate = "Contributed: " + q(d.gvalue) + " (" + p(d.gvalue/(d.mtotal/2)) +" of total donations) <br>";
-            var msg = strGroups;
+            var msg = header + strGroups;
             return msg;
           
           }
