@@ -494,7 +494,12 @@
             });
           }
           function mouseout(d, i) {
-            
+            d3.select("#infoBox")
+              .style("font-size", "10pt")
+              //.style("visibility", "visible")
+              .html("")
+
+
             d3.select("#tooltip").style("visibility", "hidden") 
             //Only remove text labels for small tight groups
             if(d.value<1558488) {
